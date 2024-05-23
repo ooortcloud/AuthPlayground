@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		
+<!-- Spring boot에서는 SqlSessionTemplate 객체를 사용하지 않으므로, 직접 FQCN 명시해줘야 함. -->
+<mapper namespace="com.example.demo.service.UserDao">		
+
+	<resultMap id="userSelectMap" type='user'>
+		<!-- jdbcType 대문자로 명시 안하면 bug 생기는 거 같음 -->
+		<result property="userId" column="user_id" jdbcType="VARCHAR" />
+		<result property="password" column="password" jdbcType="VARCHAR" />
+		<result property="name" column="name" jdbcType="VARCHAR" />
+		<result property="nickname" column="nickname" jdbcType="VARCHAR" />
+
+		<result property="email" column="email" jdbcType="VARCHAR" />
+		<result property="sex" column="sex" jdbcType="VARCHAR" />
+		<result property="birthday" column="birthday" jdbcType="DATE" />
+		<result property="phoneNumber" column="phone_number" jdbcType="VARCHAR" />
+
+		<result property="regDate" column="reg_date" jdbcType="DATE" />
+	</resultMap>
+
+
+	<insert id="addUser" parameterType='user'>
+	
+		INSERT
+		INTO users (user_id, password, name, nickname, email, sex, birthday, phone_number, reg_date)
+		VALUES (#{userId}, #{password}, #{name}, #{nickname}, #{email:VARCHAR}, #{sex:VARCHAR}, #{birthday:VARCHAR}, #{phoneNumber:VARCHAR}, SYSDATE)
+		<!-- 전부 필수라서 nullable 처리(jdbcType 명시)가 필요가 없음. -->
+	</insert>
+	
+	<select id="getUser" parameterType='user' resultMap='userSelectMap'>
+		
+		SELECT
+		*
+		FROM users
+		WHERE user_id=#{userId}
+			AND password=#{password}
+	</select>
+	
+	<select id="getUserListById" parameterType='string' resultMap='userSelectMap'>
+	
+		SELECT
+		user_id, password, name, nickname, reg_date
+		FROM users
+		WHERE user_id LIKE '%'|#{value}|'%'
+	</select>
+	
+	<select id="getUserListByNickname" parameterType='string' resultMap='userSelectMap'>
+	
+		SELECT
+		user_id, password, name, nickname, reg_date
+		FROM users
+		WHERE nickname LIKE '%'|#{value}|'%'
+	</select>
+	
+	<!-- 검색어 관련 필터 필요 -->
+	<select id="getUserList" parameterType='string' resultMap='userSelectMap'>
+	
+		SELECT
+		*
+		FROM users
+	</select>
+	
+	<update id="updateUser" parameterType='user'>
+		
+		<!-- 동적 sql로 변환 필요 -->
+		UPDATE users
+		SET password = #{password},
+			name = #{name},
+			email = #{email},
+			sex = #{sex},
+			birthday = #{birthday},
+			phoneNumber = #{phoneNumber},
+		WHERE user_id = #{userId}
+	</update>
+	
+	<!-- 회원 삭제 기능은 만들지 않는다.
+	<delete>
+	
+	</delete>
+	 -->
+</mapper>
