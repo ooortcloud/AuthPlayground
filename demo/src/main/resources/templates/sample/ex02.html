@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<title>조건문 처리</title>
+<style>
+	.target {
+		background-color: red;
+	}
+</style>
+</head>
+<body>
+	<ul>
+		<th:block th:each="dto, state : ${list}">
+			<li th:text="${state.count + ' :: ' + dto.first}" th:class="${dto.sno % 5 == 0} ? 'target'"></li>
+		</th:block>
+	</ul>
+</body>
+</html>

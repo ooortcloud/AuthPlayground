@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<title>날짜 formatting</title>
+</head>
+<body>
+	<li th:each="dto : ${list}">
+		[[${dto.sno}]] :: [[${#temporals.format(dto.regTime, 'yyyy-mm-dd')}]]
+	</li>
+</body>
+</html>

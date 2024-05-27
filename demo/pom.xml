@@ -83,6 +83,20 @@
 	      <groupId>org.springframework.boot</groupId>
 	      <artifactId>spring-boot-starter-thymeleaf</artifactId>
 	    </dependency>
+	    
+	    <!-- Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
+		<!-- thymeleaf-extras-java8time :: html에서 JAVA의 LocalDate, LocalDataTime type을 편하게 다를 수 있게 해줌 -->
+		<dependency>
+		    <groupId>org.thymeleaf.extras</groupId>
+		    <artifactId>thymeleaf-extras-java8time</artifactId>
+		    <version>3.0.4.RELEASE</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<title>numbers 기본 객체</title>
+</head>
+<body>
+	<li th:each="dto: ${list}">
+		[[${#numbers.formatInteger(dto.sno, 5)}]]
+	</li>	
+</body>
+</html>
