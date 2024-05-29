@@ -26,14 +26,17 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class AuthController {
 
-	@Value("${CLIENT_ID}")
+	@Value("${naver.client.id}")
 	private String clientId;
 	
-	@Value("${CLIENT_SECRET}")
+	@Value("${naver.client.secret}")
 	private String clientSecret;
 	
-	@Value("${REDIRECT_URI}")
+	@Value("${naver.redirect.uri}")
 	private String redirectUri;
+	
+	@Value("${naver.state}")
+	private String state;
 	
 	@GetMapping({"/naver/naverLoginSample", "/naver/naverLogin"})
 	public void naverLoginSample(Model model) {
