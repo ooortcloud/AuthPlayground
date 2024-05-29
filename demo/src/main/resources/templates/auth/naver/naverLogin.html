@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="EUC-KR">
+<title>naver login</title>
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	 crossorigin="anonymous">
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+	 crossorigin="anonymous">
+	 
+	<!-- (2) LoginWithNaverId Javscript SDK -->
+	<script src="/js/naveridlogin_js_sdk_2.0.2.js"></script>
+	 
+</head>
+<body>
+	<!-- (1) 버튼 event 처리를 위하여 id를 지정 id=loginButton -->
+	<p>
+		<div id="naverIdLogin">
+			<!-- <a id="naverIdLogin_loginButton" href="#" role="button">  -->
+			<!-- <a id="naverIdLogin_loginButton" th:href="@{https://nid.naver.com/oauth2.0/authorize(response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state})}" role="button">  -->
+			<a id="naverIdLogin_loginButton" th:href="@{https://nid.naver.com/oauth2.0/authorize(response_type=code, client_id=${clientId}, redirect_uri=${redirectUri}, state=${state})}" role="button">  -->
+			<img src="https://static.nid.naver.com/oauth/big_g.PNG" width=320></a>
+		</div>	
+	</p>
+	
+	<!-- (3) LoginWithNaverId Javscript 설정 정보 및 초기화 -->
+	<!-- 
+	<script>
+		window.name='opener';
+		
+		// naver login 연동 URL 생성
+		var naverLogin = new naver.LoginWithNaverId(
+			{
+				// 내 application ID
+				clientId: "2oUdi6MJgtMs286H0xvQ",
+				// 내가 지정한 내 server의 callbackURL
+				// callbackUrl: "https://" + window.location.hostname + ((location.port==""||location.port==undefined)?"":":" + location.port) + "/oauth/sample/callback.html",
+				callbackUrl: "http://localhost:8080/auth/naver/callback",
+				isPopup: true,
+				loginButton: {color: "green", type: 3, height: 60}
+			}
+		);
+		/* (4) 네아로 로그인 정보를 초기화하기 위하여 init을 호출 */
+		naverLogin.init();
+		
+		/* (4-1) 임의의 링크를 설정해줄 필요가 있는 경우 */
+		// $("#gnbLogin").attr("href", naverLogin.generateAuthorizeUrl());
+
+		/* (5) 현재 로그인 상태를 확인 */
+		window.addEventListener('load', function () {
+			naverLogin.getLoginStatus(function (status) {
+				if (status) {
+					/* (6) 로그인 상태가 "true" 인 경우 로그인 버튼을 없애고 사용자 정보를 출력합니다. */
+					setLoginStatus();
+				}
+			});
+		});
+
+		/* (6) 로그인 상태가 "true" 인 경우 로그인 버튼을 없애고 사용자 정보를 출력합니다. */
+		function setLoginStatus() {
+			var profileImage = naverLogin.user.getProfileImage();
+			var nickName = naverLogin.user.getNickName();
+			var imageViewer = '';
+			if (profileImage) {
+				imageViewer += '<br><br><img src="' + profileImage + '" height=50 /> <p>';
+			}
+			$("#naverIdLogin_loginButton").html(imageViewer + nickName + '님 반갑습니다.</p>');
+			// $("#gnbLogin").html("Logout");
+			// $("#gnbLogin").attr("href", "#");
+			
+			/* (7) 로그아웃 버튼을 설정하고 동작을 정의합니다. */
+			/*
+			$("#gnbLogin").click(function (e) {
+				e.preventDefault();
+				naverLogin.logout();
+				location.replace('/oauth/sample/javascript_sample.html');
+			});
+			*/
+		}
+	</script>
+	 -->
+</body>
+</html>
