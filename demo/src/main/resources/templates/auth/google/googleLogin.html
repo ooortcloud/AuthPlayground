@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<title>google login</title>
+</head>
+<body>
+	<a th:href="@{https://accounts.google.com/o/oauth2/v2/auth(client_id=${client_id}, redirect_uri=${redirect_uri}, response_type=${response_type}, scope=${scope}, access_type=${access_type}, prompt=${prompt}, state=${state})}">구글 로그인</a>
+</body>
+</html>

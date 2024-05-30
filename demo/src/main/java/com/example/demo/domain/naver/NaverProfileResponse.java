@@ -1,4 +1,4 @@
-package com.example.demo.domain;
+package com.example.demo.domain.naver;
 
 import lombok.Getter;
 import lombok.Setter;

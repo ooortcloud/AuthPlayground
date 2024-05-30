@@ -1,4 +1,4 @@
-package com.example.demo.web;
+package com.example.demo.web.rest;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -14,17 +14,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.demo.domain.NaverOAuthToken;
-import com.example.demo.domain.NaverProfileResponse;
+import com.example.demo.domain.naver.NaverOAuthToken;
+import com.example.demo.domain.naver.NaverProfileResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.log4j.Log4j2;
 
 @Controller
-@RequestMapping("/auth")
+@RequestMapping("/auth/naver/rest")
 @Log4j2
-public class AuthController {
+public class AuthNaverRestController {
 
 	@Value("${naver.client.id}")
 	private String clientId;
@@ -35,24 +35,10 @@ public class AuthController {
 	@Value("${naver.redirect.uri}")
 	private String redirectUri;
 	
-	@Value("${naver.state}")
-	private String state;
-	
-	@GetMapping({"/naver/naverLoginSample", "/naver/naverLogin"})
-	public void naverLoginSample(Model model) {
-		
-		log.info("naver");
-		
-		model.addAttribute("clientId", clientId);
-		model.addAttribute("redirectUri", redirectUri);
-		model.addAttribute("state", "abcd");
-	}
-	
 	private String TOKEN_REQUEST_URL = "https://nid.naver.com/oauth2.0/token";
 	private String PROFILE_REQUEST_URL = "https://openapi.naver.com/v1/nid/me";
 	
-	
-	@RequestMapping("/naver/callback")
+	@GetMapping("/callback")
 	public void naverCallback(@RequestParam String code, @RequestParam String state, Model model) throws JsonProcessingException {
 		
 		log.info(code);
@@ -67,6 +53,7 @@ public class AuthController {
 	    params.add("code", code);
 	    params.add("state", state);
 
+	    /// get access token
 		// Http 메시지 생성
 	    HttpEntity<MultiValueMap<String, String>> naverTokenRequest = makeTokenRequest(params);
 
@@ -82,10 +69,10 @@ public class AuthController {
 	    // ObjectMapper를 통해 NaverOAuthToken 객체로 매핑
 		ObjectMapper objectMapper = new ObjectMapper();
 		NaverOAuthToken naverToken = objectMapper.readValue(tokenResponse.getBody(), NaverOAuthToken.class);
-	    
 	    log.info(naverToken);
 
 
+	    /// get profile
 	    HttpEntity<MultiValueMap<String, String>> naverProfileRequest = makeProfileRequest(naverToken);
 
 	    ResponseEntity<String> profileResponse = rt.exchange(
