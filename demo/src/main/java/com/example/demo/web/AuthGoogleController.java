@@ -110,6 +110,13 @@ public class AuthGoogleController {
 		model.addAttribute("payload", payload);
 	}
 	
+	@GetMapping("/generateKey")
+	public void generateKey() {
+		
+		log.info("generateKeyView");
+	}
+	
+	
 	private HttpEntity<MultiValueMap<String, String>> makeTokenRequest(MultiValueMap<String, String> params) {
 		
 	    HttpHeaders headers = new HttpHeaders();

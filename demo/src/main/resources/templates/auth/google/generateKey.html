@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>generate key</title>
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" >
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" >
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
+
+<script type="text/javascript">
+
+	$( function() {
+		
+		$("button:contains('제출')").on("click", function(){
+			
+			$.ajax({
+				
+				url : "/auth/google/rest/generateKey",
+				method : "POST",
+				dataType : "JSON",
+				headers : {
+					"Accept" : "application/json",
+					"Content-Type" : "application/json"
+				},
+				data : JSON.stringify({ 
+					userName : $('input:text').val()
+				}),
+				success : function(responseBody, httpStatus){
+
+					console.log(responseBody);
+					/*
+					if(responseBody.msg != "ok") {
+						alert('상품 제거에 실패...');  
+					} else {
+						alert('상품 제거에 성공하였습니다!');
+						window.location.href = "/product/listProduct/manage";
+					}
+					*/
+					
+					$('.row:last').empty();
+					let detail = "";
+					detail += "<h2>당신의 key</h2>"; 
+					detail += "<p id='encodedKey'>" + responseBody.encodedKey +"</p>"; 
+					// detail += "<p>QR code :: " + responseBody.url + "</p>";					
+					detail += "<img src='https://quickchart.io/chart?cht=qr&chs=200x200&chl=otpauth://totp/"+responseBody.userName+"@"+responseBody.hostName+"?secret="+responseBody.encodedKey+"&chld=H|0' alt=''>";
+					detail += "<hr/>";
+					detail += '<button type="button" class="btn btn-default">인증하기</button>';
+					$('.row:last').append(detail);
+				}
+			});
+		});
+		
+		$('button:contains("인증")').on('click', function() {
+			
+			$.ajax({
+				
+				url : "/auth/google/rest/checkKey",
+				method : "POST",
+				dataType : "JSON",
+				headers : {
+					"Accept" : "application/json",
+					"Content-Type" : "application/json"
+				},
+				data : JSON.stringify({ 
+					userName : $('#encodedKey').val()
+				}),
+				success : function(responseBody, httpStatus){
+
+					console.log(responseBody);
+					
+				}
+			});
+		});
+	});
+
+</script>
+
+</head>
+<body>
+	<br/>
+	<br/>
+	<div class="container">
+		<form>
+			<div class="form-group">
+				<label for="userName">이름</label>
+				<input type="text" name="userName" class="form-control" placeholder="당신의 이름을 입력">
+			</div>
+			<div class="row">
+				<button type="button" class="btn btn-default">제출</button>
+			</div>
+		</form>
+		
+		<div class="row">
+			
+		</div>
+	</div>
+</body>
+</html>
