@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.demo.domain.google.GoogleAuthenticatorKey;
 import com.example.demo.domain.google.GoogleUserOtpCheck;
+import com.example.demo.domain.google.GoogleUserRequest;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -42,8 +43,8 @@ public class AuthGoogleRestController {
 	
 	@ResponseBody
 	@PostMapping("/generateKey")
-	public GoogleAuthenticatorKey generateKey(@RequestBody String userName) { 
-		 
+	public GoogleAuthenticatorKey generateKey(@RequestBody GoogleUserRequest googleUserRequest) { 
+		
 							// [secretSize + numOfScratchCodes * scratchCodeSize]
 		byte[] buffer = new byte[10 + 5 * 5]; 
 		
@@ -59,13 +60,13 @@ public class AuthGoogleRestController {
 		// create key
 		String encodedKey = new String(bEncodedKey); 
 		log.info(encodedKey);
-		
+		 
 								// (userName, hostName, secretKeyStr)
 		// String url = getQRBarcodeURL(userName, hostName, encodedKey);
 		
 		GoogleAuthenticatorKey key = new GoogleAuthenticatorKey();
 		key.setEncodedKey(encodedKey);
-		key.setUserName(userName);
+		key.setUserName(googleUserRequest.getUserName());
 		key.setHostName(hostName);
 		// key.setUrl(url);
 		/*
