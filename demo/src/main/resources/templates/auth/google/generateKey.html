@@ -13,6 +13,32 @@
 
 	$( function() {
 		
+
+		$(document).on('click', '#checkKey', function() {
+			
+			console.log('flag');
+			
+			$.ajax({
+				
+				url : "/auth/google/rest/checkKey",
+				method : "POST",
+				dataType : "JSON",
+				headers : {
+					"Accept" : "application/json",
+					"Content-Type" : "application/json"
+				},
+				data : JSON.stringify({ 
+					encodedKey : $('#encodedKey').text(),
+					userCode : $('input[name="userCode"]').val()
+				}),
+				success : function(responseBody, httpStatus){
+
+					console.log(responseBody);
+					
+				}
+			});
+		});
+		
 		$("button:contains('제출')").on("click", function(){
 			
 			$.ajax({
@@ -25,54 +51,34 @@
 					"Content-Type" : "application/json"
 				},
 				data : JSON.stringify({ 
-					userName : $('input:text').val()
+					userName : $('input:text[name="userName"]').val()
 				}),
 				success : function(responseBody, httpStatus){
 
 					console.log(responseBody);
-					/*
-					if(responseBody.msg != "ok") {
-						alert('상품 제거에 실패...');  
-					} else {
-						alert('상품 제거에 성공하였습니다!');
-						window.location.href = "/product/listProduct/manage";
-					}
-					*/
 					
-					$('.row:last').empty();
+					// $('.row:last').empty();
+					$('.container').empty();
 					let detail = "";
 					detail += "<h2>당신의 key</h2>"; 
-					detail += "<p id='encodedKey'>" + responseBody.encodedKey +"</p>"; 
-					// detail += "<p>QR code :: " + responseBody.url + "</p>";					
+					detail += "<p id='encodedKey'>" + responseBody.encodedKey +"</p>"; 			
 					detail += "<img src='https://quickchart.io/chart?cht=qr&chs=200x200&chl=otpauth://totp/"+responseBody.userName+"@"+responseBody.hostName+"?secret="+responseBody.encodedKey+"&chld=H|0' alt=''>";
 					detail += "<hr/>";
-					detail += '<button type="button" class="btn btn-default">인증하기</button>';
-					$('.row:last').append(detail);
+					detail += "<form>";
+					detail += "<div class='form-group'>";
+					detail += '<label for="userName">이름</label>';
+					detail += '<input type="text" name="userCode" class="form-control" placeholder="인증번호 6자리 입력">';
+					detail += "</div>";
+					detail += "<div class='row'>";
+					detail += '<button type="button" class="btn btn-default" id="checkKey">인증하기</button>';
+					detail += "</div>";
+					detail += "</form>";
+					// $('.row:last').append(detail);
+					$('.container').append(detail);
 				}
 			});
 		});
 		
-		$('button:contains("인증")').on('click', function() {
-			
-			$.ajax({
-				
-				url : "/auth/google/rest/checkKey",
-				method : "POST",
-				dataType : "JSON",
-				headers : {
-					"Accept" : "application/json",
-					"Content-Type" : "application/json"
-				},
-				data : JSON.stringify({ 
-					userName : $('#encodedKey').val()
-				}),
-				success : function(responseBody, httpStatus){
-
-					console.log(responseBody);
-					
-				}
-			});
-		});
 	});
 
 </script>
@@ -91,10 +97,6 @@
 				<button type="button" class="btn btn-default">제출</button>
 			</div>
 		</form>
-		
-		<div class="row">
-			
-		</div>
 	</div>
 </body>
 </html>

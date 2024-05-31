@@ -27,15 +27,6 @@ import lombok.extern.log4j.Log4j2;
 @RequestMapping("/auth/google/rest")
 @Log4j2
 public class AuthGoogleRestController {
-	
-	@Value("${google.client.id}")
-	private String clientId;
-	
-	@Value("${google.client.secret}")
-	private String clientSecret;
-	
-	@Value("${google.redirect.uri}")
-	private String redirectUri;
 
 	// generateKey function의 매개변수에 있던 값인데, host 명은 어차피 우리 server 상에서 static하지 않은가 싶어서 metadata처리함
 	@Value("${server.host.name}")
@@ -59,27 +50,50 @@ public class AuthGoogleRestController {
 		
 		// create key
 		String encodedKey = new String(bEncodedKey); 
-		log.info(encodedKey);
-		 
-								// (userName, hostName, secretKeyStr)
-		// String url = getQRBarcodeURL(userName, hostName, encodedKey);
-		
+
 		GoogleAuthenticatorKey key = new GoogleAuthenticatorKey();
 		key.setEncodedKey(encodedKey);
 		key.setUserName(googleUserRequest.getUserName());
 		key.setHostName(hostName);
-		// key.setUrl(url);
 		/*
 		 * 발급된 encodedKey를 가지고 본인의 Google Authenticator app에 추가한다.
-		 * url에 접속하면 아마도 편하게 등록 가능한 qr code가 뜰듯
+		 * Google Authenticator app에서 QR을 통해서도 등록이 가능하다.
+		 * QR code 생성 로직은 generateKey.html에서 확인
 		 */
 		return key; 
 	}
 	
 	@ResponseBody
 	@PostMapping("/checkKey")
-	public boolean checkKey(@RequestBody GoogleUserOtpCheck googleUserOtpCheck) {
+	public String checkKey(@RequestBody GoogleUserOtpCheck googleUserOtpCheck) throws InvalidKeyException, NoSuchAlgorithmException {
 		
+		long userCode = Integer.parseInt(googleUserOtpCheck.getUserCode());
+		String encodedKey = googleUserOtpCheck.getEncodedKey();
+		
+		long I = new Date().getTime();
+		long II = I / 30000;
+		
+		boolean result = false;
+		
+		Base32 codec = new Base32();
+		byte[] decodedKey = codec.decode(encodedKey);
+		
+		// Window is used to check codes generated in the near past.
+        // You can use this value to tune how far you're willing to go.
+        int window = 3;
+        for (int i = -window; i <= window; ++i) {
+            long hash = verify_code(decodedKey, II + i);
+ 
+            log.info("hash = " + hash);
+			log.info("userCode = " + userCode);
+			
+            if (hash == userCode) {
+                return String.valueOf(true);
+            }
+        }
+		
+        return String.valueOf(false);
+		/*
 		long otpnum = Integer.parseInt(googleUserOtpCheck.getUserCode());
 		long wave = new Date().getTime();
 		boolean result = false;
@@ -101,14 +115,12 @@ public class AuthGoogleRestController {
 		} catch (InvalidKeyException | NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-		return result;
+		
+		log.info(String.valueOf(result));
+				
+		return String.valueOf(result);
+		*/
 	}
-	
-	private static String getQRBarcodeURL(String userName, String hostName, String secretKeyStr) {
-	
-        String format = "http://chart.apis.google.com/chart?cht=qr&amp;chs=300x300&amp;chl=otpauth://totp/%s@%s%%3Fsecret%%3D%s&amp;chld=H|0";
-        return String.format(format, userName, hostName, secretKeyStr);
-    }
 	
 	private static int verify_code(byte[] key, long t)
             throws NoSuchAlgorithmException, InvalidKeyException {
